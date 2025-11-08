@@ -1,0 +1,32 @@
+version: "2.38.2"
+services:
+  ath-backend:
+    image: anityanhub-backend:latest
+    container_name: ath-backend
+    depends_on:
+      ath-mongodb:
+        condition: service_started
+    restart: always
+    networks:
+      - frontend
+      - backend
+
+  ath-frontend:
+    image: anityanhub-frontend:latest
+    container_name: ath-frontend
+    restart: always
+    networks:
+      - frontend
+
+  ath-mongodb:
+    image: mongo:latest
+    container_name: ath-mongodb
+    restart: always
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge

@@ -1,0 +1,54 @@
+version: "2.38.2"
+services:
+  ath-backend:
+    build:
+      context: ${ATH_BACKEND_PATH}
+      target: dev
+    container_name: ath-backend
+    depends_on:
+      ath-mongodb:
+        condition: service_started
+    restart: always
+    volumes:
+      - ${ATH_BACKEND_PATH}:/ath-backend
+      - /ath-backend/node_modules
+    ports:
+      - 3001:3000
+    networks:
+      - frontend
+      - backend
+
+  ath-frontend:
+    build:
+      context: ${ATH_FRONTEND_PATH}
+      target: dev
+    container_name: ath-frontend
+    restart: always
+    ports:
+      - 3002:3000
+    volumes:
+      - ${ATH_FRONTEND_PATH}:/ath-frontend
+      - /ath-frontend/node_modules
+    networks:
+      - frontend
+
+  ath-mongodb:
+    image: mongo:latest
+    container_name: ath-mongodb
+    restart: always
+    volumes:
+      - ath-mongodb-data:/data/db
+    ports:
+      - 27018:27017
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge
+
+volumes:
+  ath-mongodb-data:
+    name: ath-mongodb-data
